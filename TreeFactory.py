@@ -10,7 +10,7 @@ info_gain_threshold: int = 0
 def build_tree(dataset: [], label_column_index):
     impurity = calculate_impurity(dataset, label_column_index)
     question = find_best_question(impurity, dataset, label_column_index)
-    if question.info_gain == info_gain_threshold:
+    if question.info_gain <= info_gain_threshold:
         return Leaf(get_unique_values(dataset), label_column_index)
 
     return Node(
@@ -22,11 +22,12 @@ def categories_entity(entity, starting_node: Node):
     current_node: any = starting_node
 
     # keep going till we get a leaf
-    while current_node is not isinstance(current_node, Leaf):
+    while not isinstance(current_node, Leaf):
         if ask_question(entity, current_node.question):
             current_node = current_node.true_node
         else:
             current_node = current_node.false_node
+    return current_node.confidence
 
 
 def ask_question(entity: Entity, question: Question) -> bool:
@@ -60,7 +61,7 @@ def find_best_question(previous_impurity: float, dataset: [Entity], label_column
                 temp_info_gain = previous_impurity - w_avg_impurity
                 if temp_info_gain >= top_info_gain:
                     top_info_gain = temp_info_gain
-                    top_question = Question(value, top_info_gain, i, split_dataset[0], split_dataset[1])
+                    top_question = Question(value[0], top_info_gain, i, split_dataset[0], split_dataset[1])
     return top_question
 
 
