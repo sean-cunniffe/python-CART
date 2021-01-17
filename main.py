@@ -1,16 +1,12 @@
-# This is a sample Python script.
+import TreeComponents
+import TreeFactory
+import json
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+entities = TreeFactory.get_entities_from_csv_file('hazelnut.csv')
 
+TreeFactory.no_columns = 12
+node: TreeComponents.Node = TreeFactory.build_tree(entities, 11)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+#dump tree to json file for angular application
+with open('data.json', 'w') as outfile:
+    json.dump(node.to_json(), outfile)
